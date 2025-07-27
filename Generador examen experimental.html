@@ -2035,7 +2035,12 @@
         // Si no hay DOMContentLoaded, ejecutar inmediatamente
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById('examDate').valueAsDate = new Date();
+                const inputFecha = document.getElementById('examDate');
+                if (inputFecha) {
+                    inputFecha.valueAsDate = new Date();
+                } else {
+                    console.warn("⚠️ No se encontró el campo #examDate");
+                }
                 addSection();
                 checkExamAccess();
             });
