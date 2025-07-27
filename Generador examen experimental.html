@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Exámenes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #2c5f7c;
+            padding-bottom: 20px;
+        }
+        
+        .logo {
+            width: 100px;
+            height: auto;
+            margin-right: 20px;
+            object-fit: contain;
+        }
+        
+        .header-text {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .school-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c5f7c;
+            margin-bottom: 5px;
+        }
+        
+        .ore-name {
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .exam-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .exam-info input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .exam-theme {
+            margin-bottom: 20px;
+        }
+        
+        .exam-theme input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #2c5f7c;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .subject-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .teacher-input, .subject-input {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #2c5f7c;
+            border-radius: 5px;
+            color: white;
+            background-color: #2c5f7c;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .teacher-input input, .subject-input input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .teacher-input input::placeholder, .subject-input input::placeholder {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .section {
+            border: 3px solid #2c5f7c;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            background-color: #2c5f7c;
+            color: white;
+        }
+        
+        .section-header {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .section-header input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .section-header input::placeholder {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .section-content {
+            padding: 0 20px 20px;
+        }
+        
+        .section-config {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .config-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .config-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .section-config select, .section-config input {
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .description-area {
+            margin-bottom: 15px;
+        }
+        
+        .description-area label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 5px;
+        }
+        
+        .description-area textarea {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            min-height: 60px;
+            resize: vertical;
+        }
+        
+        .items-area {
+            background-color: white;
+            color: black;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            min-height: 200px;
+        }
+        
+        .item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .item-number {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .item-points {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .question-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .options-container {
+            margin-top: 10px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .option input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        .option input[type="text"] {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+        
+        .fillblanks-options {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+        
+        .fillblanks-options label {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .fillblanks-options input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            margin-bottom: 5px;
+        }
+        
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .matching-column h4 {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .matching-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .btn-apply {
+            background-color: #5cb3cc;
+            color: white;
+        }
+        
+        .btn-edit {
+            background-color: #90EE90;
+            color: black;
+        }
+        
+        .btn-delete {
+            background-color: #ff4444;
+            color: white;
+        }
+        
+        .btn-add {
+            background-color: #90EE90;
+            color: black;
+        }
+        
+        .btn-print {
+            background-color: #333;
+            color: white;
+        }
+        
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+        
+        .applied-mode {
+            background-color: #d4edda;
+        }
+        
+        .image-upload input[type="file"] {
+            display: none;
+        }
+        
+        .image-upload label {
+            display: block;
+            padding: 8px;
+            background-color: #6c757d;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .image-upload label:hover {
+            background-color: #5a6268;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .large-modal {
+            max-width: 800px;
+            width: 95%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        
+        /* Estilos para impresión */
+        @media print {
+            .section-buttons, .bottom-buttons, .btn, .config-label, .image-upload label {
+                display: none !important;
+            }
+            
+            .section-config, .description-area label, .exam-theme {
+                display: none !important;
+            }
+            
+            body {
+                background-color: white;
+                padding: 0;
+                font-size: 11px;
+                line-height: 1.2;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 15px;
+            }
+            
+            .exam-info {
+                background-color: transparent !important;
+                padding: 0 !important;
+                margin-bottom: 15px;
+                font-size: 12px;
+            }
+            
+            .exam-info input {
+                border: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+            }
+            
+            .exam-info-print {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+            
+            .teacher-subject-print {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 20px;
+                font-size: 12px;
+            }
+            
+            .subject-section {
+                display: none !important;
+            }
+            
+            .section {
+                background-color: transparent !important;
+                color: black !important;
+                border: none !important;
+                margin-bottom: 15px;
+                padding: 0 !important;
+            }
+            
+            .section-header {
+                color: black !important;
+                border-bottom: 2px solid #000;
+                font-size: 16px;
+                font-weight: bold;
+                padding: 8px 0;
+                margin-bottom: 10px;
+                background-color: transparent !important;
+            }
+            
+            .section-header input {
+                color: black !important;
+                font-size: 16px;
+                font-weight: bold;
+                background: transparent !important;
+                border: none !important;
+                padding: 0 !important;
+            }
+            
+            .section-content {
+                color: black !important;
+                padding: 0 !important;
+                background-color: transparent !important;
+            }
+            
+            .description-area textarea {
+                border: none !important;
+                background: transparent !important;
+                font-weight: bold;
+                color: black !important;
+                padding: 0 !important;
+                min-height: auto !important;
+                margin-bottom: 8px;
+            }
+            
+            .items-area {
+                background-color: transparent !important;
+                padding: 0 !important;
+            }
+            
+            .item {
+                background-color: transparent !important;
+                border: 1px solid #ddd !important;
+                margin-bottom: 15px !important;
+                padding: 8px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .question-input {
+                border: none !important;
+                background: transparent !important;
+                font-weight: bold;
+                color: black !important;
+                padding: 0 !important;
+                margin-bottom: 5px !important;
+            }
+            
+            .option input[type="text"] {
+                border: none !important;
+                background: transparent !important;
+                color: black !important;
+                padding: 0 !important;
+            }
+            
+            .option input[type="checkbox"] {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                width: 12px;
+                height: 12px;
+                border: 1px solid #000;
+                border-radius: 2px;
+                margin-right: 8px;
+            }
+            
+            .fillblanks-options {
+                display: none !important;
+            }
+            
+            .matching-item input {
+                border: none !important;
+                background: transparent !important;
+                color: black !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://static.wixstatic.com/media/5a5425_0048de693950479bbf7d4e08ca02e44c~mv2.png" alt="Logo Departamento de Educación" class="logo">
+            <div class="header-text">
+                <div class="school-name" contenteditable="true" id="schoolName">Nombre de la Escuela</div>
+                <div class="ore-name" contenteditable="true" id="oreName">Nombre de la ORE</div>
+            </div>
+        </div>
+        
+        <div class="exam-info">
+            <input type="text" placeholder="Nombre estudiante:" id="studentName">
+            <input type="text" placeholder="Grupo:" id="group">
+            <input type="date" id="examDate">
+        </div>
+        
+        <div class="exam-theme">
+            <input type="text" placeholder="Tema del examen:" id="examTheme">
+        </div>
+        
+        <div class="exam-info-print" style="display: none;">
+            <span>Nombre estudiante: ______________________________________</span>
+            <span>Grupo: ___________</span>
+            <span>Fecha: ___________________</span>
+        </div>
+        
+        <div class="subject-section">
+            <div class="teacher-input">
+                <input type="text" placeholder="Maestro ingrese nombre" id="teacherName">
+            </div>
+            <div class="subject-input">
+                <input type="text" placeholder="Materia que ofrece" id="subject">
+            </div>
+        </div>
+        
+        <div class="teacher-subject-print" style="display: none;">
+            <span id="teacherPrint"></span>
+            <span id="subjectPrint"></span>
+        </div>
+        
+        <div id="sectionsContainer"></div>
+        
+        <div class="bottom-buttons">
+            <div>
+                <button class="btn btn-add" onclick="addSection()">Añadir sección</button>
+                <button class="btn" onclick="publishExamOnline()" style="background-color: #28a745; color: white;">Publicar Examen Online</button>
+                <button class="btn" onclick="viewExamResults()" style="background-color: #17a2b8; color: white;">Ver Resultados</button>
+                <button class="btn" onclick="debugDatabase()" style="background-color: #ffc107; color: black;">🔍 Debug BD</button>
+                <button class="btn" onclick="clearAllExams()" style="background-color: #dc3545; color: white;">🗑️ Limpiar Todo</button>
+                <button class="btn" onclick="testWixConnection()" style="background-color: #17a2b8; color: white;">🧪 Test Wix</button>
+            </div>
+            <button class="btn btn-print" onclick="printExam()">Imprimir Examen</button>
+        </div>
+        
+        <!-- Modal de publicación -->
+        <div id="publishModal" class="modal">
+            <div class="modal-content">
+                <h3 style="margin-bottom: 20px; color: #2c5f7c;">Publicar Examen Online</h3>
+                <p style="margin-bottom: 15px;"><strong>Tema:</strong> <span id="publishTheme"></span></p>
+                <p style="margin-bottom: 15px;"><strong>Grupo:</strong> <span id="publishGroup"></span></p>
+                <p style="margin-bottom: 15px;"><strong>Fecha:</strong> <span id="publishDate"></span></p>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Tiempo límite (minutos):</label>
+                    <input type="number" id="timeLimit" value="60" min="5" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <input type="checkbox" id="allowAudio" checked>
+                    <label for="allowAudio" style="margin-left: 5px;">Permitir audio (lectura en voz alta)</label>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <p style="margin-bottom: 10px; font-weight: bold;">Enlace del examen:</p>
+                    <input type="text" id="examLink" readonly style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: #e9ecef;">
+                    <button onclick="copyExamLink()" style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Copiar enlace</button>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button onclick="closePublishModal()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Cancelar</button>
+                    <button onclick="confirmPublishExam()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Publicar</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal de resultados -->
+        <div id="resultsModal" class="modal">
+            <div class="modal-content large-modal">
+                <h3 style="margin-bottom: 20px; color: #2c5f7c;">Resultados de Exámenes</h3>
+                <div id="examsList"></div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button onclick="closeResultsModal()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sectionCounter = 1;
+        let sections = [];
+        let deletedSectionNumbers = [];
+        
+        // Base de datos simulada persistente - usando localStorage para verdadera persistencia
+        let publishedExams, examResults;
+        
+        function initializeDatabase() {
+            try {
+                publishedExams = JSON.parse(localStorage.getItem('publishedExams') || '[]');
+                examResults = JSON.parse(localStorage.getItem('examResults') || '{}');
+                console.log('Base de datos cargada - Exámenes:', publishedExams.length);
+                console.log('IDs de exámenes cargados:', publishedExams.map(e => e.id));
+            } catch (e) {
+                console.error('Error cargando base de datos:', e);
+                publishedExams = [];
+                examResults = {};
+                saveDatabase();
+            }
+        }
+        
+        function saveDatabase() {
+            try {
+                localStorage.setItem('publishedExams', JSON.stringify(publishedExams));
+                localStorage.setItem('examResults', JSON.stringify(examResults));
+                console.log('Base de datos guardada - Total exámenes:', publishedExams.length);
+                
+                // Verificar que se guardó correctamente
+                const verification = JSON.parse(localStorage.getItem('publishedExams') || '[]');
+                console.log('Verificación guardado - Exámenes en localStorage:', verification.length);
+            } catch (e) {
+                console.error('Error guardando en localStorage:', e);
+            }
+        }
+        
+        // Función para limpiar todos los exámenes
+        function clearAllExams() {
+            if (confirm('⚠️ ATENCIÓN: Esto borrará TODOS los exámenes y resultados.\n\n¿Estás seguro de que quieres continuar?')) {
+                // Limpiar localStorage
+                publishedExams = [];
+                examResults = {};
+                saveDatabase();
+                
+                // Enviar mensaje a Wix para limpiar CMS también
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'CLEAR_ALL_EXAMS'
+                    }, '*');
+                }
+                
+                console.log('Todos los exámenes han sido borrados');
+                alert('✅ Todos los exámenes han sido borrados exitosamente.\nAhora puedes crear exámenes nuevos que se guardarán en el CMS.');
+                
+                // Actualizar vista si está abierta
+                const resultsModal = document.getElementById('resultsModal');
+                if (resultsModal.style.display === 'block') {
+                    viewExamResults();
+                }
+            }
+        }
+
+        // Función para diagnosticar la base de datos
+        function debugDatabase() {
+            console.log('=== DIAGNÓSTICO DE BASE DE DATOS ===');
+            console.log('publishedExams array:', publishedExams);
+            console.log('localStorage publishedExams:', localStorage.getItem('publishedExams'));
+            console.log('examResults object:', examResults);
+            console.log('localStorage examResults:', localStorage.getItem('examResults'));
+            console.log('=====================================');
+        }
+
+        // Función para probar conexión con Wix
+        function testWixConnection() {
+            console.log('🧪 Probando conexión con Wix...');
+            
+            const testData = {
+                examId: "test_" + Date.now(),
+                tema: "Examen de Prueba",
+                grupo: "Grupo Test",
+                fechaExamen: new Date().toISOString(),
+                tiempoLimite: 60,
+                profesor: "Profesor Test",
+                materia: "Materia Test",
+                escuela: "Escuela Test",
+                ore: "ORE Test",
+                activo: true,
+                seccionesData: JSON.stringify([]),
+                fechaCreacion: new Date().toISOString()
+            };
+            
+            try {
+                if (window.parent && window.parent !== window) {
+                    console.log('📤 Enviando datos de prueba a Wix:', testData);
+                    window.parent.postMessage({
+                        type: 'SAVE_PUBLISHED_EXAM',
+                        data: testData
+                    }, '*');
+                    
+                    alert('🧪 Mensaje de prueba enviado a Wix.\nRevisa la consola de la página principal (no del iframe) para ver si se recibe.');
+                } else {
+                    alert('❌ No se detectó iframe padre. Verifica que estés en Wix.');
+                }
+            } catch (error) {
+                console.error('❌ Error enviando prueba:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        }
+        
+        // Inicializar base de datos
+        initializeDatabase();
+
+        class ExamSection {
+            constructor(id) {
+                this.id = id;
+                this.title = `Sección ${id}`;
+                this.type = 'multiple';
+                this.itemCount = 1;
+                this.pointsPerItem = 1;
+                this.description = '';
+                this.items = [];
+                this.applied = false;
+                this.images = [];
+            }
+        }
+
+        function getNextSectionNumber() {
+            if (deletedSectionNumbers.length > 0) {
+                return deletedSectionNumbers.shift();
+            }
+            return sectionCounter++;
+        }
+
+        function addSection() {
+            const sectionNumber = getNextSectionNumber();
+            const section = new ExamSection(sectionNumber);
+            sections.push(section);
+            renderSection(section);
+        }
+
+        function renderSection(section) {
+            const container = document.getElementById('sectionsContainer');
+            
+            const existingSection = document.getElementById(`section-${section.id}`);
+            if (existingSection) {
+                existingSection.remove();
+            }
+            
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = `section ${section.applied ? 'applied-mode' : ''}`;
+            sectionDiv.id = `section-${section.id}`;
+            
+            sectionDiv.innerHTML = `
+                <div class="section-header">
+                    <input type="text" value="${section.title}" 
+                           onchange="updateSectionTitle(${section.id}, this.value)"
+                           placeholder="Título de la sección"
+                           ${section.applied ? 'disabled' : ''}>
+                </div>
+                <div class="section-content">
+                    <div class="section-config">
+                        <div class="config-field">
+                            <label class="config-label">Tipo de ejercicio</label>
+                            <select onchange="updateSectionType(${section.id}, this.value)" ${section.applied ? 'disabled' : ''}>
+                                <option value="multiple" ${section.type === 'multiple' ? 'selected' : ''}>Selección múltiple</option>
+                                <option value="fillblanks" ${section.type === 'fillblanks' ? 'selected' : ''}>Llena blancos</option>
+                                <option value="matching" ${section.type === 'matching' ? 'selected' : ''}>Pareo</option>
+                                <option value="truefalse" ${section.type === 'truefalse' ? 'selected' : ''}>Cierto o Falso</option>
+                            </select>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-label">Total de ítems</label>
+                            <input type="number" value="${section.itemCount}" min="1" onchange="updateItemCount(${section.id}, this.value)" ${section.applied ? 'disabled' : ''}>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-label">Puntos por ítem</label>
+                            <input type="number" value="${section.pointsPerItem}" min="0.1" step="0.1" onchange="updatePointsPerItem(${section.id}, this.value)" ${section.applied ? 'disabled' : ''}>
+                        </div>
+                        <div class="config-field">
+                            <label class="config-label">Añadir imagen</label>
+                            <div class="image-upload">
+                                <input type="file" id="imageUpload-${section.id}" accept="image/*" onchange="handleImageUpload(${section.id}, this)" ${section.applied ? 'disabled' : ''}>
+                                <label for="imageUpload-${section.id}">Seleccionar imagen</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="description-area">
+                        <label>Descripción del ejercicio, pregunta, etc.</label>
+                        <textarea onchange="updateDescription(${section.id}, this.value)" ${section.applied ? 'disabled' : ''}>${section.description}</textarea>
+                        <div id="sectionImages-${section.id}"></div>
+                    </div>
+                    
+                    <div class="items-area" id="items-${section.id}"></div>
+                    
+                    <div class="section-buttons">
+                        ${!section.applied ? 
+                            `<button class="btn btn-apply" onclick="applySection(${section.id})">Aplicar Sección</button>` :
+                            `<button class="btn btn-edit" onclick="editSection(${section.id})">Editar sección</button>`
+                        }
+                        <button class="btn btn-delete" onclick="deleteSection(${section.id})">Eliminar sección</button>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(sectionDiv);
+            renderItems(section);
+        }
+
+        function renderItems(section) {
+            const itemsContainer = document.getElementById(`items-${section.id}`);
+            if (!itemsContainer) return;
+            
+            itemsContainer.innerHTML = '';
+            
+            while (section.items.length < section.itemCount) {
+                section.items.push({
+                    question: '',
+                    options: [],
+                    correctAnswers: [],
+                    fillOptions: []
+                });
+            }
+            
+            section.items = section.items.slice(0, section.itemCount);
+            
+            for (let i = 0; i < section.itemCount; i++) {
+                const item = section.items[i];
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+                
+                let itemHTML = `
+                    <div class="item-header">
+                        <span class="item-number">${i + 1}.</span>
+                        <span class="item-points">(${section.pointsPerItem} pts)</span>
+                    </div>
+                `;
+                
+                switch (section.type) {
+                    case 'multiple':
+                        itemHTML += renderMultipleChoice(section.id, i, item, section.applied);
+                        break;
+                    case 'fillblanks':
+                        itemHTML += renderFillBlanks(section.id, i, item, section.applied);
+                        break;
+                    case 'matching':
+                        itemHTML += renderMatching(section.id, i, item, section.applied);
+                        break;
+                    case 'truefalse':
+                        itemHTML += renderTrueFalse(section.id, i, item, section.applied);
+                        break;
+                }
+                
+                itemDiv.innerHTML = itemHTML;
+                itemsContainer.appendChild(itemDiv);
+            }
+        }
+
+        function renderMultipleChoice(sectionId, itemIndex, item, applied) {
+            while (item.options.length < 4) {
+                item.options.push('');
+            }
+            
+            let html = `
+                <input type="text" class="question-input" placeholder="Escriba la pregunta aquí..." 
+                       value="${item.question || ''}" 
+                       onchange="updateItemQuestion(${sectionId}, ${itemIndex}, this.value)"
+                       ${applied ? 'disabled' : ''}>
+                <div class="options-container">
+            `;
+            
+            for (let i = 0; i < 4; i++) {
+                const optionLetter = String.fromCharCode(65 + i);
+                html += `
+                    <div class="option">
+                        <input type="checkbox" value="${i}"
+                               ${item.correctAnswers.includes(i) ? 'checked' : ''}
+                               onchange="updateCorrectAnswers(${sectionId}, ${itemIndex}, ${i}, this.checked)"
+                               ${applied ? 'disabled' : ''}>
+                        <label>${optionLetter})</label>
+                        <input type="text" placeholder="Opción ${optionLetter}" 
+                               value="${item.options[i] || ''}"
+                               onchange="updateOption(${sectionId}, ${itemIndex}, ${i}, this.value)"
+                               ${applied ? 'disabled' : ''}>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        function renderFillBlanks(sectionId, itemIndex, item, applied) {
+            return `
+                <input type="text" class="question-input" placeholder="Escriba la oración con espacios en blanco (use ___ para los blancos)..." 
+                       value="${item.question || ''}" 
+                       onchange="updateItemQuestion(${sectionId}, ${itemIndex}, this.value)"
+                       ${applied ? 'disabled' : ''}>
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    Tip: Use ___ donde quiera crear un espacio en blanco
+                </div>
+                <div class="fillblanks-options">
+                    <label>Palabras opcionales para los blancos (separar con comas):</label>
+                    <input type="text" placeholder="palabra1, palabra2, palabra3..." 
+                           value="${item.fillOptions ? item.fillOptions.join(', ') : ''}"
+                           onchange="updateFillOptions(${sectionId}, ${itemIndex}, this.value)"
+                           ${applied ? 'disabled' : ''}>
+                </div>
+            `;
+        }
+
+        function renderMatching(sectionId, itemIndex, item, applied) {
+            while (item.options.length < 4) {
+                item.options.push('');
+            }
+            while (item.correctAnswers.length < 4) {
+                item.correctAnswers.push('');
+            }
+            
+            let html = `
+                <input type="text" class="question-input" placeholder="Instrucciones para el pareo..." 
+                       value="${item.question || ''}" 
+                       onchange="updateItemQuestion(${sectionId}, ${itemIndex}, this.value)"
+                       ${applied ? 'disabled' : ''}>
+                <div class="matching-container">
+                    <div class="matching-column">
+                        <h4>Columna A</h4>
+            `;
+            
+            for (let i = 0; i < 4; i++) {
+                html += `
+                    <div class="matching-item">
+                        <strong>${i + 1}.</strong>
+                        <input type="text" placeholder="Concepto ${i + 1}" 
+                               value="${item.options[i] || ''}"
+                               onchange="updateOption(${sectionId}, ${itemIndex}, ${i}, this.value)"
+                               style="width: 80%; margin-left: 5px;"
+                               ${applied ? 'disabled' : ''}>
+                    </div>
+                `;
+            }
+            
+            html += `
+                    </div>
+                    <div class="matching-column">
+                        <h4>Columna B</h4>
+            `;
+            
+            for (let i = 0; i < 4; i++) {
+                const letter = String.fromCharCode(65 + i);
+                html += `
+                    <div class="matching-item">
+                        <strong>${letter}.</strong>
+                        <input type="text" placeholder="Definición ${letter}" 
+                               value="${item.correctAnswers[i] || ''}"
+                               onchange="updateCorrectAnswerText(${sectionId}, ${itemIndex}, ${i}, this.value)"
+                               style="width: 80%; margin-left: 5px;"
+                               ${applied ? 'disabled' : ''}>
+                    </div>
+                `;
+            }
+            
+            html += '</div></div>';
+            return html;
+        }
+
+        function renderTrueFalse(sectionId, itemIndex, item, applied) {
+            return `
+                <input type="text" class="question-input" placeholder="Escriba la declaración..." 
+                       value="${item.question || ''}" 
+                       onchange="updateItemQuestion(${sectionId}, ${itemIndex}, this.value)"
+                       ${applied ? 'disabled' : ''}>
+                <div class="options-container">
+                    <div class="option">
+                        <input type="checkbox" value="true"
+                               ${item.correctAnswers.includes('true') ? 'checked' : ''}
+                               onchange="updateTrueFalseAnswer(${sectionId}, ${itemIndex}, 'true', this.checked)"
+                               ${applied ? 'disabled' : ''}>
+                        <label>Cierto</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" value="false"
+                               ${item.correctAnswers.includes('false') ? 'checked' : ''}
+                               onchange="updateTrueFalseAnswer(${sectionId}, ${itemIndex}, 'false', this.checked)"
+                               ${applied ? 'disabled' : ''}>
+                        <label>Falso</label>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleImageUpload(sectionId, input) {
+            if (input.files && input.files[0]) {
+                alert('Funcionalidad de imagen simplificada para esta demo');
+            }
+        }
+
+        function updateSectionTitle(sectionId, title) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section) {
+                section.title = title;
+            }
+        }
+
+        function updateSectionType(sectionId, type) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section && !section.applied) {
+                section.type = type;
+                section.items = [];
+                renderItems(section);
+            }
+        }
+
+        function updateItemCount(sectionId, count) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section && !section.applied) {
+                section.itemCount = parseInt(count);
+                renderItems(section);
+            }
+        }
+
+        function updatePointsPerItem(sectionId, points) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section && !section.applied) {
+                section.pointsPerItem = parseFloat(points);
+                renderItems(section);
+            }
+        }
+
+        function updateDescription(sectionId, description) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section) {
+                section.description = description;
+            }
+        }
+
+        function updateItemQuestion(sectionId, itemIndex, question) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section && section.items[itemIndex]) {
+                section.items[itemIndex].question = question;
+            }
+        }
+
+        function updateOption(sectionId, itemIndex, optionIndex, value) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section && section.items[itemIndex]) {
+                section.items[itemIndex].options[optionIndex] = value;
+            }
+        }
+
+        function updateCorrectAnswers(sectionId, itemIndex, answerIndex, isChecked) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section && section.items[itemIndex]) {
+                if (isChecked) {
+                    if (!section.items[itemIndex].correctAnswers.includes(answerIndex)) {
+                        section.items[itemIndex].correctAnswers.push(answerIndex);
+                    }
+                } else {
+                    section.items[itemIndex].correctAnswers = section.items[itemIndex].correctAnswers.filter(a => a !== answerIndex);
+                }
+            }
+        }
+
+        function updateCorrectAnswerText(sectionId, itemIndex, answerIndex, value) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section && section.items[itemIndex]) {
+                section.items[itemIndex].correctAnswers[answerIndex] = value;
+            }
+        }
+
+        function updateTrueFalseAnswer(sectionId, itemIndex, answer, isChecked) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section && section.items[itemIndex]) {
+                if (isChecked) {
+                    if (!section.items[itemIndex].correctAnswers.includes(answer)) {
+                        section.items[itemIndex].correctAnswers.push(answer);
+                    }
+                } else {
+                    section.items[itemIndex].correctAnswers = section.items[itemIndex].correctAnswers.filter(a => a !== answer);
+                }
+            }
+        }
+
+        function updateFillOptions(sectionId, itemIndex, optionsText) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section && section.items[itemIndex]) {
+                if (optionsText.trim()) {
+                    section.items[itemIndex].fillOptions = optionsText.split(',').map(opt => opt.trim()).filter(opt => opt);
+                } else {
+                    section.items[itemIndex].fillOptions = [];
+                }
+            }
+        }
+
+        function applySection(sectionId) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section) {
+                section.applied = true;
+                renderSection(section);
+            }
+        }
+
+        function editSection(sectionId) {
+            const section = sections.find(s => s.id === sectionId);
+            if (section) {
+                section.applied = false;
+                renderSection(section);
+            }
+        }
+
+        function deleteSection(sectionId) {
+            if (confirm('¿Está seguro de que desea eliminar esta sección?')) {
+                const sectionIndex = sections.findIndex(s => s.id === sectionId);
+                if (sectionIndex > -1) {
+                    sections.splice(sectionIndex, 1);
+                    deletedSectionNumbers.push(sectionId);
+                    deletedSectionNumbers.sort((a, b) => a - b);
+                }
+                const sectionDiv = document.getElementById(`section-${sectionId}`);
+                if (sectionDiv) {
+                    sectionDiv.remove();
+                }
+            }
+        }
+
+        // Detectar si estamos en Wix
+        const isInWix = window.parent !== window;
+        
+        // Función para comunicarse con Wix de forma más segura
+        function sendToWixCMS(resultData) {
+            try {
+                if (window.parent && window.parent !== window) {
+                    console.log('Enviando datos a Wix:', resultData);
+                    window.parent.postMessage({
+                        type: 'SAVE_EXAM_RESULT',
+                        data: resultData
+                    }, '*');
+                    console.log('Mensaje enviado exitosamente');
+                } else {
+                    console.log('No se detectó iframe padre - guardando solo localmente');
+                }
+            } catch (error) {
+                console.error('Error enviando a Wix:', error);
+                // Continúa funcionando aunque no pueda enviar a Wix
+            }
+        }
+
+        // Función para guardar examen publicado en Wix CMS
+        function saveExamToWixCMS(examData) {
+            try {
+                if (window.parent && window.parent !== window) {
+                    console.log('Enviando examen a Wix CMS:', examData);
+                    window.parent.postMessage({
+                        type: 'SAVE_PUBLISHED_EXAM',
+                        data: examData
+                    }, '*');
+                    console.log('Examen enviado a Wix CMS exitosamente');
+                } else {
+                    console.log('No se detectó iframe padre - guardando examen solo localmente');
+                }
+            } catch (error) {
+                console.error('Error enviando examen a Wix:', error);
+            }
+        }
+
+        // Función para cargar exámenes desde Wix CMS
+        function loadExamsFromWixCMS() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    console.log('Solicitando exámenes de Wix CMS');
+                    window.parent.postMessage({
+                        type: 'LOAD_PUBLISHED_EXAMS'
+                    }, '*');
+                } else {
+                    console.log('No se detectó iframe padre - usando solo localStorage');
+                }
+            } catch (error) {
+                console.error('Error solicitando exámenes de Wix:', error);
+            }
+        }
+        
+        // Función para generar ID único para examen
+        function generateSimpleExamId() {
+            return 'exam_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+        }
+        
+        // Función mejorada para publicar examen compatible con Wix
+        function publishExamOnline() {
+            const theme = document.getElementById('examTheme').value;
+            const group = document.getElementById('group').value;
+            const date = document.getElementById('examDate').value;
+            
+            if (!theme || !group || !date || sections.length === 0) {
+                alert('Por favor complete el tema del examen, grupo, fecha y agregue al menos una sección antes de publicar.');
+                return;
+            }
+            
+            const unappliedSections = sections.filter(s => !s.applied);
+            if (unappliedSections.length > 0) {
+                alert('Por favor aplique todas las secciones antes de publicar el examen.');
+                return;
+            }
+            
+            document.getElementById('publishTheme').textContent = theme;
+            document.getElementById('publishGroup').textContent = group;
+            document.getElementById('publishDate').textContent = new Date(date).toLocaleDateString();
+            
+            const examId = generateSimpleExamId();
+            
+            // Obtener la URL actual sin parámetros
+            let baseUrl = window.location.href.split('?')[0].split('#')[0];
+            
+            // Crear el enlace correcto para el examen
+            const examLink = `${baseUrl}#exam=${examId}`;
+            
+            console.log('Enlace generado:', examLink);
+            document.getElementById('examLink').value = examLink;
+            document.getElementById('publishModal').style.display = 'block';
+        }
+
+        function generateExamId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function copyExamLink() {
+            const linkInput = document.getElementById('examLink');
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(linkInput.value);
+            alert('Enlace copiado al portapapeles');
+        }
+
+        function confirmPublishExam() {
+            const examId = document.getElementById('examLink').value.split('#exam=')[1];
+            
+            if (!examId) {
+                alert('Error: No se pudo obtener el ID del examen');
+                return;
+            }
+            
+            const theme = document.getElementById('examTheme').value;
+            const group = document.getElementById('group').value;
+            const date = document.getElementById('examDate').value;
+            const timeLimit = parseInt(document.getElementById('timeLimit').value);
+            const allowAudio = document.getElementById('allowAudio').checked;
+            const teacher = document.getElementById('teacherName').value;
+            const subject = document.getElementById('subject').value;
+            const school = document.getElementById('schoolName').textContent;
+            const ore = document.getElementById('oreName').textContent;
+            
+            const examData = {
+                id: examId,
+                theme: theme,
+                group: group,
+                date: date,
+                timeLimit: timeLimit,
+                allowAudio: allowAudio,
+                teacher: teacher,
+                subject: subject,
+                school: school,
+                ore: ore,
+                sections: JSON.parse(JSON.stringify(sections)),
+                createdAt: new Date().toISOString(),
+                isActive: true
+            };
+            
+            // Datos para Wix CMS
+            const wixExamData = {
+                examId: examId,
+                tema: theme,
+                grupo: group,
+                fechaExamen: new Date(date).toISOString(),
+                tiempoLimite: timeLimit,
+                profesor: teacher,
+                materia: subject,
+                escuela: school,
+                ore: ore,
+                activo: true,
+                seccionesData: JSON.stringify(sections),
+                fechaCreacion: new Date().toISOString()
+            };
+            
+            console.log('Guardando examen con ID:', examId);
+            console.log('Datos del examen:', examData);
+            
+            // Guardar localmente
+            initializeDatabase();
+            publishedExams.push(examData);
+            examResults[examId] = [];
+            saveDatabase();
+            
+            // Guardar en Wix CMS
+            saveExamToWixCMS(wixExamData);
+            
+            console.log('Examen guardado. Total de exámenes:', publishedExams.length);
+            console.log('Lista de exámenes publicados:', publishedExams.map(e => e.id));
+            
+            alert(`Examen publicado exitosamente!\nID del examen: ${examId}\nComparta el enlace con sus estudiantes.`);
+            closePublishModal();
+        }
+
+        function closePublishModal() {
+            document.getElementById('publishModal').style.display = 'none';
+        }
+
+        function viewExamResults() {
+            const examsList = document.getElementById('examsList');
+            examsList.innerHTML = '';
+            
+            if (publishedExams.length === 0) {
+                examsList.innerHTML = '<p style="text-align: center; color: #666;">No hay exámenes publicados aún.</p>';
+            } else {
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                table.innerHTML = `
+                    <thead>
+                        <tr style="background-color: #2c5f7c; color: white;">
+                            <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Tema</th>
+                            <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Fecha</th>
+                            <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Grupo</th>
+                            <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Estudiantes</th>
+                            <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Promedio</th>
+                            <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Enlace</th>
+                            <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+                
+                publishedExams.forEach(exam => {
+                    const results = examResults[exam.id] || [];
+                    const average = results.length > 0 ? 
+                        (results.reduce((sum, r) => sum + r.finalScore, 0) / results.length).toFixed(1) : 
+                        'N/A';
+                    
+                    const examLink = `${window.location.href.split('?')[0].split('#')[0]}#exam=${exam.id}`;
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="border: 1px solid #ddd; padding: 12px;">${exam.theme}</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">${new Date(exam.date).toLocaleDateString()}</td>
+                        <td style="border: 1px solid #ddd; padding: 12px;">${exam.group}</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${results.length}</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">${average}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                            <input type="text" value="${examLink}" readonly style="width: 200px; padding: 4px; font-size: 10px; border: 1px solid #ccc;" onclick="this.select()">
+                            <div style="font-size: 10px; color: #666; margin-top: 2px;">ID: ${exam.id}</div>
+                        </td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: center;">
+                            <button onclick="downloadExamResults('${exam.id}')" style="padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 3px; cursor: pointer; margin-right: 5px;">📊 Descargar</button>
+                            <button onclick="toggleExamStatus('${exam.id}')" style="padding: 5px 10px; background: ${exam.isActive ? '#dc3545' : '#28a745'}; color: white; border: none; border-radius: 3px; cursor: pointer;">${exam.isActive ? '🔒 Cerrar' : '🔓 Abrir'}</button>
+                        </td>
+                    `;
+                    table.querySelector('tbody').appendChild(row);
+                });
+                
+                examsList.appendChild(table);
+            }
+            
+            document.getElementById('resultsModal').style.display = 'block';
+        }
+
+        function closeResultsModal() {
+            document.getElementById('resultsModal').style.display = 'none';
+        }
+
+        function downloadExamResults(examId) {
+            const exam = publishedExams.find(e => e.id === examId);
+            const results = examResults[examId] || [];
+            
+            if (results.length === 0) {
+                alert('No hay resultados para descargar aún.');
+                return;
+            }
+            
+            const excelData = [];
+            const headers = ['Nombre Completo', 'SIE', 'Fecha Envio', 'Tiempo Total', 'Puntuacion Final'];
+            
+            exam.sections.forEach((section, sIndex) => {
+                section.items.forEach((item, iIndex) => {
+                    const sectionTitle = section.title.replace(/[^\w\s]/g, ''); // Limpiar caracteres especiales
+                    headers.push(`${sectionTitle} - P${iIndex + 1}`);
+                    headers.push(`${sectionTitle} - P${iIndex + 1} (Correcto)`);
+                });
+            });
+            
+            excelData.push(headers);
+            
+            results.forEach(result => {
+                const row = [
+                    result.studentName || 'Sin nombre',
+                    result.sieNumber,
+                    new Date(result.submittedAt).toLocaleDateString('es-ES') + ' ' + new Date(result.submittedAt).toLocaleTimeString('es-ES'),
+                    result.timeSpent,
+                    result.finalScore
+                ];
+                
+                exam.sections.forEach((section, sIndex) => {
+                    section.items.forEach((item, iIndex) => {
+                        const answer = result.answers.find(a => a.sectionIndex === sIndex && a.itemIndex === iIndex);
+                        const isCorrect = answer ? answer.isCorrect : false;
+                        
+                        let answerText = 'Sin respuesta';
+                        if (answer && answer.studentAnswer) {
+                            if (section.type === 'multiple') {
+                                // Para selección múltiple, convertir números a letras (0=A, 1=B, 2=C, 3=D)
+                                if (Array.isArray(answer.studentAnswer)) {
+                                    answerText = answer.studentAnswer.map(index => 
+                                        String.fromCharCode(65 + parseInt(index))
+                                    ).join('; ');
+                                } else {
+                                    answerText = String.fromCharCode(65 + parseInt(answer.studentAnswer));
+                                }
+                            } else if (section.type === 'truefalse') {
+                                // Para cierto/falso, mostrar el texto completo
+                                answerText = answer.studentAnswer[0] === 'true' ? 'Cierto' : 'Falso';
+                            } else {
+                                // Para otros tipos (llenar blancos, pareo)
+                                if (Array.isArray(answer.studentAnswer)) {
+                                    answerText = answer.studentAnswer.join('; ');
+                                } else {
+                                    answerText = answer.studentAnswer.toString();
+                                }
+                            }
+                        }
+                        
+                        row.push(answerText);
+                        row.push(isCorrect ? 'SI' : 'NO');
+                    });
+                });
+                
+                excelData.push(row);
+            });
+            
+            // Crear CSV con codificación UTF-8 BOM para Excel
+            const BOM = '\uFEFF';
+            const csvContent = BOM + excelData.map(row => 
+                row.map(field => {
+                    // Limpiar caracteres especiales y escapar comillas
+                    const cleanField = field.toString().replace(/"/g, '""');
+                    return `"${cleanField}"`;
+                }).join(',')
+            ).join('\r\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            
+            // Limpiar nombre del archivo
+            const cleanTheme = exam.theme.replace(/[^\w\s]/g, '');
+            const cleanGroup = exam.group.replace(/[^\w\s]/g, '');
+            const dateStr = new Date(exam.date).toLocaleDateString('es-ES').replace(/\//g, '-');
+            
+            link.download = `Resultados_${cleanTheme}_${cleanGroup}_${dateStr}.csv`;
+            link.click();
+        }
+
+        function copyExamLinkFromResults(examLink) {
+            navigator.clipboard.writeText(examLink).then(() => {
+                alert('Enlace del examen copiado al portapapeles');
+            }).catch(() => {
+                // Fallback para navegadores que no soportan clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = examLink;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Enlace del examen copiado al portapapeles');
+            });
+        }
+
+        function toggleExamStatus(examId) {
+            const examIndex = publishedExams.findIndex(e => e.id === examId);
+            if (examIndex > -1) {
+                publishedExams[examIndex].isActive = !publishedExams[examIndex].isActive;
+                saveDatabase();
+                viewExamResults();
+            }
+        }
+
+        function printExam() {
+            const teacherName = document.getElementById('teacherName').value;
+            const subject = document.getElementById('subject').value;
+            
+            document.getElementById('teacherPrint').textContent = teacherName;
+            document.getElementById('subjectPrint').textContent = subject;
+            
+            document.querySelector('.exam-info').style.display = 'none';
+            document.querySelector('.exam-info-print').style.display = 'flex';
+            document.querySelector('.teacher-subject-print').style.display = 'flex';
+            
+            window.print();
+            
+            setTimeout(() => {
+                document.querySelector('.exam-info').style.display = 'grid';
+                document.querySelector('.exam-info-print').style.display = 'none';
+                document.querySelector('.teacher-subject-print').style.display = 'none';
+            }, 1000);
+        }
+
+        // Verificar si se está accediendo a un examen como estudiante
+        function checkExamAccess() {
+            let examId = null;
+            
+            // Verificar en hash (para Wix)
+            if (window.location.hash) {
+                const hashParams = new URLSearchParams(window.location.hash.substring(1));
+                examId = hashParams.get('exam');
+                console.log('Hash encontrado:', window.location.hash);
+                console.log('Exam ID extraído:', examId);
+            }
+            
+            // Verificar en query parameters (para uso tradicional)
+            if (!examId) {
+                const urlParams = new URLSearchParams(window.location.search);
+                examId = urlParams.get('exam');
+                console.log('Query params:', window.location.search);
+                console.log('Exam ID de query:', examId);
+            }
+            
+            if (examId) {
+                console.log('Cargando examen para estudiante:', examId);
+                loadStudentExam(examId);
+            } else {
+                console.log('Modo generador - no se encontró ID de examen');
+                // Agregar indicador visual
+                document.body.style.border = '5px solid #2c5f7c';
+                document.title = 'Generador de Exámenes - Modo Profesor';
+            }
+        }
+
+        function loadStudentExam(examId) {
+            console.log('Intentando cargar examen:', examId);
+            
+            // Cargar desde localStorage primero
+            initializeDatabase();
+            console.log('Exámenes en localStorage:', publishedExams.map(e => e.id));
+            
+            let exam = publishedExams.find(e => e.id === examId);
+            
+            if (!exam) {
+                console.log('Examen no encontrado en localStorage, solicitando desde Wix CMS...');
+                // Solicitar desde Wix CMS
+                if (window.parent && window.parent !== window) {
+    console.log('🧭 Solicitando examen con ID:', examId);
+    window.parent.postMessage({
+        type: 'LOAD_PUBLISHED_EXAMS',
+        examId: examId
+    }, '*');
+} else {
+    console.log('No se detectó iframe padre - usando solo localStorage');
+}
+                
+                // Mostrar mensaje temporal
+                document.body.innerHTML = `
+                    <div style="max-width: 800px; margin: 0 auto; padding: 40px; text-align: center; font-family: Arial, sans-serif;">
+                        <h2 style="color: #2c5f7c;">Cargando examen...</h2>
+                        <p>Por favor espere mientras se cargan los datos del examen.</p>
+                        <div style="margin: 20px 0;">
+                            <div style="border: 2px solid #2c5f7c; border-radius: 50%; border-top: 2px solid transparent; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                        </div>
+                        <style>
+                            @keyframes spin {
+                                0% { transform: rotate(0deg); }
+                                100% { transform: rotate(360deg); }
+                            }
+                        </style>
+                    </div>
+                `;
+                
+                // Configurar listener para recibir datos de Wix
+                window.addEventListener('message', function(event) {
+                    if (event.data && event.data.type === 'EXAM_DATA_LOADED') {
+                        const wixExam = event.data.data;
+                        if (wixExam && wixExam.examId === examId) {
+                            // Convertir datos de Wix al formato local
+                            const convertedExam = {
+                                id: wixExam.examId,
+                                theme: wixExam.tema,
+                                group: wixExam.grupo,
+                                date: wixExam.fechaExamen,
+                                timeLimit: wixExam.tiempoLimite,
+                                teacher: wixExam.profesor,
+                                subject: wixExam.materia,
+                                school: wixExam.escuela,
+                                ore: wixExam.ore,
+                                isActive: wixExam.activo,
+                                sections: JSON.parse(wixExam.seccionesData || '[]'),
+                                createdAt: wixExam.fechaCreacion
+                            };
+                            
+                            console.log('Examen recibido desde Wix:', convertedExam);
+                            renderStudentExamInterface(convertedExam, examId);
+                        }
+                    }
+                });
+                
+                return;
+            }
+            
+            if (!exam.isActive) {
+                alert('Este examen ya no está disponible.');
+                return;
+            }
+            
+            console.log('Examen encontrado en localStorage:', exam.theme);
+            renderStudentExamInterface(exam, examId);
+        }
+        
+        function renderStudentExamInterface(exam, examId) {
+            
+            // Crear interfaz simplificada para estudiantes
+            document.body.innerHTML = `
+                <div style="max-width: 800px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+                    <div style="display: flex; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #2c5f7c; padding-bottom: 20px;">
+                        <img src="https://static.wixstatic.com/media/5a5425_0048de693950479bbf7d4e08ca02e44c~mv2.png" alt="Logo" style="width: 80px; height: auto; margin-right: 20px;">
+                        <div style="flex: 1; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #2c5f7c;">${exam.school}</div>
+                            <div style="font-size: 18px; color: #666;">${exam.ore}</div>
+                        </div>
+                        <div id="sieDisplay" style="font-size: 14px; color: #666;">
+                            <div id="studentInfo"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="sieEntry" style="text-align: center; margin-bottom: 30px;">
+                        <h2 style="color: #2c5f7c;">Datos del Estudiante</h2>
+                        <div style="margin-bottom: 15px;">
+                            <input type="text" id="studentNameInput" placeholder="Nombre completo" style="padding: 10px; font-size: 16px; border: 2px solid #2c5f7c; border-radius: 5px; width: 300px; margin-bottom: 10px;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <input type="text" id="sieInput" placeholder="Número SIE" style="padding: 10px; font-size: 16px; border: 2px solid #2c5f7c; border-radius: 5px; width: 300px;">
+                        </div>
+                        <button onclick="startExam()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">Comenzar Examen</button>
+                    </div>
+                    
+                    <div id="examContent" style="display: none;">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                            <h2 style="color: #2c5f7c; margin-bottom: 10px;">${exam.theme}</h2>
+                            <p><strong>Materia:</strong> ${exam.subject} | <strong>Profesor:</strong> ${exam.teacher}</p>
+                            <p><strong>Grupo:</strong> ${exam.group} | <strong>Tiempo límite:</strong> <span id="timer">${exam.timeLimit}:00</span></p>
+                        </div>
+                        
+                        <div id="examSections"></div>
+                        
+                        <div style="margin-top: 30px; text-align: center;">
+                            <button onclick="submitExam()" style="padding: 15px 30px; background: #007bff; color: white; border: none; border-radius: 5px; font-size: 18px; cursor: pointer;">Enviar Examen</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            window.currentExam = exam;
+            window.currentExamId = examId;
+            window.studentAnswers = [];
+        }
+
+        // Funciones para estudiantes
+        window.startExam = function() {
+            const studentName = document.getElementById('studentNameInput').value.trim();
+            const sieNumber = document.getElementById('sieInput').value.trim();
+            
+            if (!studentName) {
+                alert('Por favor ingrese su nombre completo');
+                return;
+            }
+            
+            if (!sieNumber) {
+                alert('Por favor ingrese su número SIE');
+                return;
+            }
+            
+            const existingResults = examResults[window.currentExamId] || [];
+            const alreadyTaken = existingResults.find(r => r.sieNumber === sieNumber);
+            
+            if (alreadyTaken) {
+                alert('Ya has completado este examen. Si necesitas volver a tomarlo, contacta a tu profesor.');
+                return;
+            }
+            
+            document.getElementById('studentInfo').innerHTML = `
+                <div><strong>Estudiante:</strong> ${studentName}</div>
+                <div><strong>SIE:</strong> ${sieNumber}</div>
+            `;
+            document.getElementById('sieEntry').style.display = 'none';
+            document.getElementById('examContent').style.display = 'block';
+            
+            window.examStartTime = new Date();
+            window.currentStudentName = studentName;
+            startTimer();
+            renderStudentExam();
+        };
+
+        function startTimer() {
+            let timeLeft = window.currentExam.timeLimit * 60;
+            
+            window.timerInterval = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer').textContent = 
+                    minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+                
+                if (timeLeft <= 0) {
+                    clearInterval(window.timerInterval);
+                    alert('Tiempo agotado. El examen se enviará automáticamente.');
+                    submitExam();
+                    return;
+                }
+                
+                timeLeft--;
+            }, 1000);
+        }
+
+        function renderStudentExam() {
+            const sectionsContainer = document.getElementById('examSections');
+            
+            window.currentExam.sections.forEach((section, sectionIndex) => {
+                window.studentAnswers[sectionIndex] = [];
+                
+                const sectionDiv = document.createElement('div');
+                sectionDiv.style.marginBottom = '30px';
+                sectionDiv.style.border = '1px solid #ddd';
+                sectionDiv.style.borderRadius = '8px';
+                sectionDiv.style.padding = '20px';
+                
+                sectionDiv.innerHTML = `<h3 style="color: #2c5f7c; margin-bottom: 15px;">${section.title}</h3>`;
+                
+                if (section.description) {
+                    sectionDiv.innerHTML += `<p style="margin-bottom: 15px; font-weight: bold;">${section.description}</p>`;
+                }
+                
+                section.items.forEach((item, itemIndex) => {
+                    window.studentAnswers[sectionIndex][itemIndex] = [];
+                    
+                    const itemDiv = document.createElement('div');
+                    itemDiv.style.marginBottom = '20px';
+                    itemDiv.style.padding = '15px';
+                    itemDiv.style.border = '1px solid #eee';
+                    itemDiv.style.borderRadius = '5px';
+                    
+                    let itemHTML = `<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">`;
+                    itemHTML += `<strong>${itemIndex + 1}. ${item.question}</strong>`;
+                    itemHTML += `</div>`;
+                    
+                    if (section.type === 'multiple') {
+                        item.options.forEach((option, optionIndex) => {
+                            if (option.trim()) {
+                                const letter = String.fromCharCode(65 + optionIndex);
+                                itemHTML += `<div style="margin-bottom: 8px;">`;
+                                itemHTML += `<input type="checkbox" name="q${sectionIndex}_${itemIndex}" value="${optionIndex}" onchange="updateAnswer(${sectionIndex}, ${itemIndex}, ${optionIndex}, this.checked)">`;
+                                itemHTML += `<label style="margin-left: 8px;">${letter}) ${option}</label>`;
+                                itemHTML += `</div>`;
+                            }
+                        });
+                    } else if (section.type === 'truefalse') {
+                        itemHTML += `<div style="margin-bottom: 8px;">`;
+                        itemHTML += `<input type="radio" name="q${sectionIndex}_${itemIndex}" value="true" onchange="updateTrueFalseStudent(${sectionIndex}, ${itemIndex}, 'true')">`;
+                        itemHTML += `<label style="margin-left: 8px;">Cierto</label>`;
+                        itemHTML += `</div>`;
+                        itemHTML += `<div style="margin-bottom: 8px;">`;
+                        itemHTML += `<input type="radio" name="q${sectionIndex}_${itemIndex}" value="false" onchange="updateTrueFalseStudent(${sectionIndex}, ${itemIndex}, 'false')">`;
+                        itemHTML += `<label style="margin-left: 8px;">Falso</label>`;
+                        itemHTML += `</div>`;
+                    } else if (section.type === 'fillblanks') {
+                        const questionParts = item.question.split('___');
+                        let questionHTML = '';
+                        questionParts.forEach((part, partIndex) => {
+                            questionHTML += part;
+                            if (partIndex < questionParts.length - 1) {
+                                questionHTML += `<input type="text" onchange="updateFillBlankAnswer(${sectionIndex}, ${itemIndex}, ${partIndex}, this.value)" style="border: none; border-bottom: 1px solid #000; padding: 2px 5px; margin: 0 5px;">`;
+                            }
+                        });
+                        itemHTML += `<div>${questionHTML}</div>`;
+                        
+                        if (item.fillOptions && item.fillOptions.length > 0) {
+                            itemHTML += `<div style="margin-top: 10px; font-size: 12px; color: #666;">`;
+                            itemHTML += `<strong>Opciones:</strong> ${item.fillOptions.join(', ')}`;
+                            itemHTML += `</div>`;
+                        }
+                    } else if (section.type === 'matching') {
+                        itemHTML += `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">`;
+                        itemHTML += `<div><h4>Columna A</h4>`;
+                        for (let i = 0; i < 4; i++) {
+                            itemHTML += `<div style="margin-bottom: 8px;">${i + 1}. ${item.options[i] || ''}</div>`;
+                        }
+                        itemHTML += `</div><div><h4>Columna B</h4>`;
+                        for (let i = 0; i < 4; i++) {
+                            const letter = String.fromCharCode(65 + i);
+                            itemHTML += `<div style="margin-bottom: 8px;">${letter}. ${item.correctAnswers[i] || ''}</div>`;
+                        }
+                        itemHTML += `</div></div>`;
+                        itemHTML += `<div style="margin-top: 10px;">`;
+                        itemHTML += `<label>Sus respuestas (ej: 1A, 2B, 3C, 4D):</label>`;
+                        itemHTML += `<input type="text" onchange="updateMatchingAnswer(${sectionIndex}, ${itemIndex}, this.value)" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">`;
+                        itemHTML += `</div>`;
+                    }
+                    
+                    itemDiv.innerHTML = itemHTML;
+                    sectionDiv.appendChild(itemDiv);
+                });
+                
+                sectionsContainer.appendChild(sectionDiv);
+            });
+        }
+
+        window.updateAnswer = function(sectionIndex, itemIndex, optionIndex, isChecked) {
+            if (isChecked) {
+                if (!window.studentAnswers[sectionIndex][itemIndex].includes(optionIndex)) {
+                    window.studentAnswers[sectionIndex][itemIndex].push(optionIndex);
+                }
+            } else {
+                window.studentAnswers[sectionIndex][itemIndex] = window.studentAnswers[sectionIndex][itemIndex].filter(a => a !== optionIndex);
+            }
+        };
+
+        window.updateTrueFalseStudent = function(sectionIndex, itemIndex, answer) {
+            window.studentAnswers[sectionIndex][itemIndex] = [answer];
+        };
+
+        window.updateFillBlankAnswer = function(sectionIndex, itemIndex, blankIndex, value) {
+            if (!window.studentAnswers[sectionIndex][itemIndex]) {
+                window.studentAnswers[sectionIndex][itemIndex] = [];
+            }
+            window.studentAnswers[sectionIndex][itemIndex][blankIndex] = value;
+        };
+
+        window.updateMatchingAnswer = function(sectionIndex, itemIndex, value) {
+            window.studentAnswers[sectionIndex][itemIndex] = [value];
+        };
+
+        window.submitExam = function() {
+            if (!confirm('¿Estás seguro de que quieres enviar el examen?')) {
+                return;
+            }
+            
+            clearInterval(window.timerInterval);
+            
+            const sieNumber = document.getElementById('sieInput').value;
+            const studentName = window.currentStudentName;
+            const endTime = new Date();
+            const timeSpent = Math.round((endTime - window.examStartTime) / 1000 / 60);
+            
+            let totalScore = 0;
+            let maxScore = 0;
+            const detailedAnswers = [];
+            
+            window.currentExam.sections.forEach((section, sectionIndex) => {
+                section.items.forEach((item, itemIndex) => {
+                    maxScore += section.pointsPerItem;
+                    const studentAnswer = window.studentAnswers[sectionIndex][itemIndex] || [];
+                    const correctAnswers = item.correctAnswers || [];
+                    
+                    let isCorrect = false;
+                    let itemScore = 0;
+                    
+                    if (section.type === 'multiple') {
+                        if (correctAnswers.length === 0) {
+                            isCorrect = studentAnswer.length === 0;
+                            itemScore = isCorrect ? section.pointsPerItem : 0;
+                        } else {
+                            const correctCount = studentAnswer.filter(a => correctAnswers.includes(a)).length;
+                            const incorrectCount = studentAnswer.filter(a => !correctAnswers.includes(a)).length;
+                            
+                            if (incorrectCount === 0 && correctCount === correctAnswers.length) {
+                                isCorrect = true;
+                                itemScore = section.pointsPerItem;
+                            } else if (correctCount > 0 && incorrectCount === 0) {
+                                itemScore = (correctCount / correctAnswers.length) * section.pointsPerItem;
+                            }
+                        }
+                    } else if (section.type === 'truefalse') {
+                        isCorrect = studentAnswer.length > 0 && correctAnswers.includes(studentAnswer[0]);
+                        itemScore = isCorrect ? section.pointsPerItem : 0;
+                    } else if (section.type === 'fillblanks') {
+                        // Para fill blanks, consideramos correcto si tiene alguna respuesta
+                        isCorrect = studentAnswer.some(answer => answer && answer.trim());
+                        itemScore = isCorrect ? section.pointsPerItem : 0;
+                    } else if (section.type === 'matching') {
+                        // Para matching, verificamos si el formato es correcto
+                        if (studentAnswer.length > 0 && studentAnswer[0]) {
+                            const matches = studentAnswer[0].split(',').map(m => m.trim());
+                            isCorrect = matches.length === 4 && matches.every(m => /^\d[A-D]$/.test(m));
+                            itemScore = isCorrect ? section.pointsPerItem : 0;
+                        }
+                    }
+                    
+                    totalScore += itemScore;
+                    
+                    detailedAnswers.push({
+                        sectionIndex,
+                        itemIndex,
+                        studentAnswer,
+                        correctAnswers,
+                        isCorrect,
+                        itemScore,
+                        maxItemScore: section.pointsPerItem
+                    });
+                });
+            });
+            
+            const finalScore = maxScore > 0 ? Math.round((totalScore / maxScore) * 100 * 100) / 100 : 0;
+            
+            const result = {
+                studentName,
+                sieNumber,
+                submittedAt: endTime.toISOString(),
+                timeSpent: timeSpent + ' minutos',
+                answers: detailedAnswers,
+                totalScore,
+                maxScore,
+                finalScore,
+                examId: window.currentExamId
+            };
+            
+            if (!examResults[window.currentExamId]) {
+                examResults[window.currentExamId] = [];
+            }
+            examResults[window.currentExamId].push(result);
+            saveDatabase();
+            
+            // Si estamos en Wix, enviar también al CMS
+            if (isInWix) {
+                const wixData = {
+                    nombreEstudiante: studentName,
+                    sie: parseInt(sieNumber),
+                    fechaEnvio: new Date().toISOString(),
+                    tiempoTotal: parseInt(timeSpent),
+                    puntuacionFinal: finalScore,
+                    respuestasCompletas: JSON.stringify(detailedAnswers),
+                    seccionesData: JSON.stringify({
+                        examId: window.currentExamId,
+                        examTheme: window.currentExam.theme,
+                        examGroup: window.currentExam.group,
+                        examDate: window.currentExam.date,
+                        teacher: window.currentExam.teacher,
+                        subject: window.currentExam.subject,
+                        sections: window.currentExam.sections.map(section => ({
+                            title: section.title,
+                            type: section.type,
+                            description: section.description,
+                            itemCount: section.itemCount,
+                            pointsPerItem: section.pointsPerItem,
+                            items: section.items.map(item => ({
+                                question: item.question,
+                                options: item.options,
+                                correctAnswers: item.correctAnswers
+                            }))
+                        }))
+                    })
+                };
+                
+                sendToWixCMS(wixData);
+            }
+            
+            document.getElementById('examContent').innerHTML = 
+                `<div style="text-align: center; padding: 40px;">` +
+                `<h2 style="color: #28a745; margin-bottom: 20px;">¡Examen Enviado Exitosamente!</h2>` +
+                `<div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">` +
+                `<p style="font-size: 18px; margin-bottom: 10px;"><strong>Estudiante:</strong> ${studentName}</p>` +
+                `<p style="font-size: 18px; margin-bottom: 10px;"><strong>Tu puntuación:</strong> ${finalScore}%</p>` +
+                `<p style="margin-bottom: 10px;"><strong>Tiempo utilizado:</strong> ${timeSpent} minutos</p>` +
+                `<p style="margin-bottom: 10px;"><strong>SIE:</strong> ${sieNumber}</p>` +
+                `</div>` +
+                `<p style="color: #666;">Gracias por completar el examen. Puedes cerrar esta ventana.</p>` +
+                `</div>`;
+        };
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('examDate').valueAsDate = new Date();
+            addSection();
+            checkExamAccess();
+        });
+
+        // Si no hay DOMContentLoaded, ejecutar inmediatamente
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('examDate').valueAsDate = new Date();
+                addSection();
+                checkExamAccess();
+            });
+        } else {
+            document.getElementById('examDate').valueAsDate = new Date();
+            addSection();
+            checkExamAccess();
+        }
+    </script>
+</body>
+</html>
